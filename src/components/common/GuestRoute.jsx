@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.js'
+import { defaultAuthenticatedPath } from '../../utils/roles.js'
 import Spinner from './Spinner.jsx'
 
 export default function GuestRoute({ children }) {
-  const { isAuthenticated, isInitializing } = useAuth()
+  const { isAuthenticated, isInitializing, user } = useAuth()
 
   if (isInitializing) {
     return (
@@ -13,7 +14,7 @@ export default function GuestRoute({ children }) {
     )
   }
 
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) return <Navigate to={defaultAuthenticatedPath(user)} replace />
 
   return children || <Outlet />
 }

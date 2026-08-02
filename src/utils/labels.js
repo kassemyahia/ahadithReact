@@ -1,7 +1,10 @@
 export const roleLabels = {
   member: 'عضو',
-  scholar: 'محدث',
+  MEMBER: 'عضو',
+  scholar: 'عالم',
+  SCHOLAR: 'عالم',
   admin: 'مدير',
+  ADMIN: 'مدير',
 }
 
 export const statusLabels = {
@@ -12,6 +15,10 @@ export const statusLabels = {
   under_review: 'قيد المراجعة',
   approved: 'مقبول',
   rejected: 'مرفوض',
+  UNDER_REVIEW: 'قيد المراجعة',
+  APPROVED: 'مقبول',
+  REJECTED: 'مرفوض',
+  PENDING_DOCUMENTS: 'بانتظار المستندات',
 }
 
 export const hadithTypeLabels = {

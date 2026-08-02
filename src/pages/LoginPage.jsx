@@ -7,6 +7,7 @@ import Button from '../components/common/Button.jsx'
 import ErrorMessage from '../components/common/ErrorMessage.jsx'
 import Input from '../components/common/Input.jsx'
 import { useAuth } from '../hooks/useAuth.js'
+import { defaultAuthenticatedPath } from '../utils/roles.js'
 import { validators } from '../utils/validators.js'
 
 export default function LoginPage() {
@@ -19,8 +20,8 @@ export default function LoginPage() {
   async function onSubmit(values) {
     setError(null)
     try {
-      await login(values)
-      navigate(location.state?.from?.pathname || '/', { replace: true })
+      const response = await login(values)
+      navigate(location.state?.from?.pathname || defaultAuthenticatedPath(response.user), { replace: true })
     } catch (apiError) {
       setError(apiError)
     }

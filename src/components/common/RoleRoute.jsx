@@ -1,15 +1,11 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.js'
+import { hasAnyRole } from '../../utils/roles.js'
 import Spinner from './Spinner.jsx'
-
-function normalizeRole(role) {
-  return String(role || '').toLowerCase()
-}
 
 export default function RoleRoute({ allowedRoles = [], children }) {
   const { isAuthenticated, isInitializing, user } = useAuth()
   const location = useLocation()
-  const role = normalizeRole(user?.type)
 
   if (isInitializing) {
     return (
@@ -23,7 +19,7 @@ export default function RoleRoute({ allowedRoles = [], children }) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  if (!allowedRoles.map(normalizeRole).includes(role)) {
+  if (!hasAnyRole(user, allowedRoles)) {
     return <Navigate to="/unauthorized" replace />
   }
 

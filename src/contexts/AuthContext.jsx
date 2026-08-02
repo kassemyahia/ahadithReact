@@ -4,6 +4,7 @@ import { setAuthFailureHandler } from '../api/client.js'
 import { getCurrentUser } from '../api/profileApi.js'
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from '../services/tokenStorage.js'
 import { normalizeApiError } from '../utils/apiErrors.js'
+import { normalizeUser } from '../utils/roles.js'
 import { AuthContext } from './authContext.js'
 
 export function AuthProvider({ children }) {
@@ -22,8 +23,9 @@ export function AuthProvider({ children }) {
 
     try {
       const currentUser = await getCurrentUser()
-      setUser(currentUser)
-      return currentUser
+      const normalizedUser = normalizeUser(currentUser)
+      setUser(normalizedUser)
+      return normalizedUser
     } catch {
       clearTokens()
       setUser(null)
@@ -50,8 +52,9 @@ export function AuthProvider({ children }) {
     try {
       const response = await loginRequest(payload)
       setTokens(response)
-      setUser(response.user)
-      return response
+      const user = normalizeUser(response.user)
+      setUser(user)
+      return { ...response, user }
     } catch (error) {
       throw normalizeApiError(error)
     }
@@ -61,8 +64,9 @@ export function AuthProvider({ children }) {
     try {
       const response = await registerRequest(payload)
       setTokens(response)
-      setUser(response.user)
-      return response
+      const user = normalizeUser(response.user)
+      setUser(user)
+      return { ...response, user }
     } catch (error) {
       throw normalizeApiError(error)
     }
@@ -81,8 +85,9 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     if (!getAccessToken()) return null
     const currentUser = await getCurrentUser()
-    setUser(currentUser)
-    return currentUser
+    const normalizedUser = normalizeUser(currentUser)
+    setUser(normalizedUser)
+    return normalizedUser
   }, [])
 
   const value = useMemo(

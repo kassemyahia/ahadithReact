@@ -1,18 +1,22 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BookOpen, Bookmark, Check, Copy } from 'lucide-react'
+import { BookOpen, Bookmark, Check, Copy, MessageSquarePlus } from 'lucide-react'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { getHadith } from '../api/hadithApi.js'
 import { addFavorite, removeFavorite } from '../api/favoritesApi.js'
+import { createScholarHadithComment } from '../api/commentsApi.js'
 import Button from '../components/common/Button.jsx'
 import EmptyState from '../components/common/EmptyState.jsx'
 import ErrorMessage from '../components/common/ErrorMessage.jsx'
 import LoadingSkeleton from '../components/common/LoadingSkeleton.jsx'
+import Textarea from '../components/common/Textarea.jsx'
 import HadithMetadata from '../components/hadith/HadithMetadata.jsx'
 import IconBadge from '../components/ui/IconBadge.jsx'
 import PageContainer from '../components/ui/PageContainer.jsx'
 import SectionCard from '../components/ui/SectionCard.jsx'
 import { useAuth } from '../hooks/useAuth.js'
+import { canAccessScholarFeatures } from '../utils/roles.js'
 
 function fieldValue(source, paths) {
   for (const path of paths) {
@@ -24,11 +28,12 @@ function fieldValue(source, paths) {
 
 export default function HadithDetailsPage() {
   const { hadithId } = useParams()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [copied, setCopied] = useState(false)
+  const commentForm = useForm({ defaultValues: { text: '' } })
   const hadithQuery = useQuery({ queryKey: ['hadith', hadithId], queryFn: ({ signal }) => getHadith(hadithId, { signal }), enabled: Boolean(hadithId) })
   const addFavoriteMutation = useMutation({
     mutationFn: () => addFavorite(hadithId),
@@ -42,6 +47,13 @@ export default function HadithDetailsPage() {
     onSuccess: () => {
       queryClient.setQueryData(['hadith', hadithId], (current) => current ? { ...current, viewerState: { ...(current.viewerState || {}), favorited: false } } : current)
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
+    },
+  })
+  const scholarCommentMutation = useMutation({
+    mutationFn: (payload) => createScholarHadithComment(hadithId, payload),
+    onSuccess: () => {
+      commentForm.reset()
+      queryClient.invalidateQueries({ queryKey: ['scholar-comments'] })
     },
   })
 
@@ -76,11 +88,15 @@ export default function HadithDetailsPage() {
     }
   }
 
+  function handleScholarComment(values) {
+    scholarCommentMutation.mutate({ text: values.text.trim() })
+  }
+
   return (
     <PageContainer labelledBy="hadith-details-heading" className="max-w-3xl">
       <h1 id="hadith-details-heading" className="sr-only">تفاصيل الحديث</h1>
       {hadithQuery.isLoading && <LoadingSkeleton rows={4} />}
-      {(hadithQuery.error || addFavoriteMutation.error || removeFavoriteMutation.error) && <ErrorMessage error={hadithQuery.error || addFavoriteMutation.error || removeFavoriteMutation.error} />}
+      {(hadithQuery.error || addFavoriteMutation.error || removeFavoriteMutation.error || scholarCommentMutation.error) && <ErrorMessage error={hadithQuery.error || addFavoriteMutation.error || removeFavoriteMutation.error || scholarCommentMutation.error} />}
       {!hadithQuery.isLoading && !hadithQuery.error && !hadith && <EmptyState message="لا توجد أحاديث متاحة" />}
       {hadith && (
         <SectionCard>
@@ -141,6 +157,22 @@ export default function HadithDetailsPage() {
             </Button>
             <span className="sr-only" aria-live="polite">{copied ? 'تم نسخ نص الحديث' : ''}</span>
           </div>
+        </SectionCard>
+      )}
+      {hadith && canAccessScholarFeatures(user) && (
+        <SectionCard>
+          <div className="flex items-center gap-3">
+            <IconBadge icon={MessageSquarePlus} />
+            <h2 className="text-lg font-black text-[var(--color-text)]">تعليق علمي</h2>
+          </div>
+          <form className="mt-5 grid gap-4" onSubmit={commentForm.handleSubmit(handleScholarComment)}>
+            <Textarea
+              label="نص التعليق"
+              error={commentForm.formState.errors.text?.message}
+              {...commentForm.register('text', { required: 'نص التعليق مطلوب' })}
+            />
+            <Button type="submit" loading={scholarCommentMutation.isPending}>إضافة التعليق</Button>
+          </form>
         </SectionCard>
       )}
     </PageContainer>
