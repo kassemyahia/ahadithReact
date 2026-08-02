@@ -9,12 +9,12 @@ export default function HadithMetadata({ hadith, metadata }) {
   ].filter(Boolean)
 
   return (
-    <dl className="flex flex-wrap gap-2 text-sm text-stone-600">
+    <dl className="flex flex-wrap gap-2 text-sm text-[var(--color-text-muted)]">
       {items.map(([label, value]) => (
-        <div key={label} className="rounded-md bg-stone-100 px-2 py-1">
+        <div key={label} className="rounded-full border border-[var(--color-border-gold)] bg-white px-3 py-1">
           <dt className="sr-only">{label}</dt>
           <dd>
-            <span className="font-medium text-stone-800">{label}: </span>
+            <span className="font-bold text-[var(--color-primary-strong)]">{label}: </span>
             {value}
           </dd>
         </div>

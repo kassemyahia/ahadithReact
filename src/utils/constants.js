@@ -9,6 +9,13 @@ export const ROUTES = {
   hadithDetails: '/hadith/:hadithId',
   books: '/books',
   bookDetails: '/books/:bookId',
+  invalidHadiths: '/invalid-hadiths',
+  narrators: '/narrators',
+  muhaddiths: '/muhaddiths',
+  questions: '/questions',
+  settings: '/settings',
+  searchHistory: '/search-history',
+  upgradeRequest: '/upgrade-request',
   login: '/login',
   register: '/register',
   verifyEmail: '/verify-email',
@@ -28,3 +35,5 @@ export const SEARCH_SORTS = [
   { value: 'HADITH_NUMBER_ASC', label: 'رقم الحديث تصاعديًا' },
   { value: 'HADITH_NUMBER_DESC', label: 'رقم الحديث تنازليًا' },
 ]
+
+export const PAGE_SIZE_OPTIONS = [10, 20, 50]

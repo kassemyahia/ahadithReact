@@ -14,7 +14,7 @@ export default function VerifyEmailPage() {
     <AuthFormContainer title="تأكيد البريد الإلكتروني">
       <div className="grid gap-4">
         {mutation.error && <ErrorMessage error={mutation.error} />}
-        {mutation.data && <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{mutation.data.message}</p>}
+        {mutation.data && <p className="rounded-[16px] border border-[var(--color-border-gold)] bg-[var(--color-primary-soft)] px-4 py-3 text-sm text-[var(--color-primary-strong)]">{mutation.data.message}</p>}
         <Button disabled={!token || mutation.isPending} onClick={() => mutation.mutate(token)}>
           تأكيد البريد
         </Button>

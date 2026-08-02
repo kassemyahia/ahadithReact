@@ -49,5 +49,4 @@ export function clearTokens() {
   setRefreshToken(null)
 }
 
-// TODO: Before production, consider Secure HttpOnly cookies for refresh tokens.
-// That change requires backend coordination because JavaScript cannot read HttpOnly cookies.
+// Moving refresh tokens to Secure, HttpOnly cookies requires coordinated backend changes.

@@ -14,7 +14,7 @@ describe('normalizeApiError', () => {
     }
 
     expect(normalizeApiError(error)).toEqual({
-      message: 'Validation failed',
+      message: 'تعذر تنفيذ الطلب. راجع البيانات وحاول مرة أخرى.',
       status: 400,
       fieldErrors: { email: 'Invalid email format' },
       requestId: 'req-1',

@@ -6,7 +6,7 @@ export default function ActiveFilters({ filters = {}, onClear }) {
   return (
     <div className="flex flex-wrap gap-2">
       {activeFilters.map(([key, value]) => (
-        <button key={key} className="rounded-md bg-emerald-50 px-3 py-1 text-sm text-emerald-950" type="button" onClick={() => onClear(key)}>
+        <button key={key} className="rounded-full border border-[var(--color-border-gold)] bg-[var(--color-primary-soft)] px-3 py-1 text-sm font-bold text-[var(--color-primary-strong)]" type="button" onClick={() => onClear(key)}>
           {value} ×
         </button>
       ))}

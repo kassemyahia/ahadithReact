@@ -1,8 +1,8 @@
 import apiClient from './client.js'
 
 // Inspected backend: UserProfileController, AuthUserDto, ProfileImageResponse.
-export function getCurrentUser() {
-  return apiClient.get('/me').then((res) => res.data)
+export function getCurrentUser(config = {}) {
+  return apiClient.get('/me', config).then((res) => res.data)
 }
 
 /** @param {File} file */

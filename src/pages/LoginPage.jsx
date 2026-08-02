@@ -36,12 +36,12 @@ export default function LoginPage() {
           دخول
         </Button>
       </form>
-      <p className="mt-4 text-sm text-stone-600">
-        <Link className="font-semibold text-emerald-800" to="/forgot-password">
+      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
+        <Link className="font-bold text-[var(--color-primary-strong)]" to="/forgot-password">
           نسيت كلمة المرور؟
         </Link>{' '}
         أو{' '}
-        <Link className="font-semibold text-emerald-800" to="/register">
+        <Link className="font-bold text-[var(--color-primary-strong)]" to="/register">
           أنشئ حسابًا
         </Link>
       </p>

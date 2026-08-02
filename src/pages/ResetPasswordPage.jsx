@@ -17,7 +17,7 @@ export default function ResetPasswordPage() {
     <AuthFormContainer title="تعيين كلمة مرور جديدة">
       <form className="grid gap-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
         {mutation.error && <ErrorMessage error={mutation.error} />}
-        {mutation.data && <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{mutation.data.message}</p>}
+        {mutation.data && <p className="rounded-[16px] border border-[var(--color-border-gold)] bg-[var(--color-primary-soft)] px-4 py-3 text-sm text-[var(--color-primary-strong)]">{mutation.data.message}</p>}
         <input type="hidden" {...register('token', validators.required)} />
         <PasswordInput id="newPassword" label="كلمة المرور الجديدة" error={formState.errors.newPassword?.message} {...register('newPassword', { ...validators.required, ...validators.password })} />
         <Button type="submit" disabled={mutation.isPending}>تحديث كلمة المرور</Button>

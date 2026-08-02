@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import ProtectedRoute from '../components/common/ProtectedRoute.jsx'
+import GuestRoute from '../components/common/GuestRoute.jsx'
 import AuthLayout from '../components/layout/AuthLayout.jsx'
 import MainLayout from '../components/layout/MainLayout.jsx'
 import BookDetailsPage from '../pages/BookDetailsPage.jsx'
@@ -9,11 +10,19 @@ import ForgotPasswordPage from '../pages/ForgotPasswordPage.jsx'
 import HadithDetailsPage from '../pages/HadithDetailsPage.jsx'
 import HomePage from '../pages/HomePage.jsx'
 import LoginPage from '../pages/LoginPage.jsx'
+import InvalidHadithsPage from '../pages/InvalidHadithsPage.jsx'
+import MuhaddithsPage from '../pages/MuhaddithsPage.jsx'
+import NarratorsPage from '../pages/NarratorsPage.jsx'
 import NotFoundPage from '../pages/NotFoundPage.jsx'
 import ProfilePage from '../pages/ProfilePage.jsx'
+import QuestionsPage from '../pages/QuestionsPage.jsx'
 import RegisterPage from '../pages/RegisterPage.jsx'
 import ResetPasswordPage from '../pages/ResetPasswordPage.jsx'
 import SearchPage from '../pages/SearchPage.jsx'
+import SearchHistoryPage from '../pages/SearchHistoryPage.jsx'
+import SettingsPage from '../pages/SettingsPage.jsx'
+import UnauthorizedPage from '../pages/UnauthorizedPage.jsx'
+import UpgradeRequestPage from '../pages/UpgradeRequestPage.jsx'
 import VerifyEmailPage from '../pages/VerifyEmailPage.jsx'
 
 export default function AppRoutes() {
@@ -25,18 +34,28 @@ export default function AppRoutes() {
         <Route path="hadith/:hadithId" element={<HadithDetailsPage />} />
         <Route path="books" element={<BooksPage />} />
         <Route path="books/:bookId" element={<BookDetailsPage />} />
+        <Route path="invalid-hadiths" element={<InvalidHadithsPage />} />
+        <Route path="narrators" element={<NarratorsPage />} />
+        <Route path="muhaddiths" element={<MuhaddithsPage />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="profile" element={<ProfilePage />} />
           <Route path="favorites" element={<FavoritesPage />} />
+          <Route path="questions" element={<QuestionsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="search-history" element={<SearchHistoryPage />} />
+          <Route path="upgrade-request" element={<UpgradeRequestPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route element={<AuthLayout />}>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
+        <Route element={<GuestRoute />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
+        </Route>
         <Route path="verify-email" element={<VerifyEmailPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="reset-password" element={<ResetPasswordPage />} />
       </Route>
     </Routes>
   )
