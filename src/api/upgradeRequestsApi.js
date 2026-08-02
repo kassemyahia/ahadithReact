@@ -24,6 +24,18 @@ export function getAdminUpgradeRequests(params = {}, config = {}) {
   return apiClient.get('/admin/upgrade-requests', { ...config, params: cleanParams(params) }).then((res) => res.data)
 }
 
+export function getAdminUpgradeRequest(upgradeRequestId, config = {}) {
+  return apiClient.get(`/admin/upgrade-requests/${upgradeRequestId}`, config).then((res) => res.data)
+}
+
+export function getAdminUpgradeDocument(upgradeRequestId, config = {}) {
+  return apiClient.get(`/admin/upgrade-requests/${upgradeRequestId}/document`, config).then((res) => res.data)
+}
+
 export function reviewUpgradeRequest(upgradeRequestId, payload) {
   return apiClient.patch(`/admin/upgrade-requests/${upgradeRequestId}/review`, payload).then((res) => res.data)
+}
+
+export function deleteAdminUpgradeRequest(upgradeRequestId) {
+  return apiClient.delete(`/admin/upgrade-requests/${upgradeRequestId}`).then((res) => res.data)
 }

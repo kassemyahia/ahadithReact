@@ -1,7 +1,8 @@
-import { Menu } from 'lucide-react'
-import { Link, NavLink } from 'react-router-dom'
+import { LayoutDashboard, Menu } from 'lucide-react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { APP_NAME } from '../../utils/constants.js'
 import { useAuth } from '../../hooks/useAuth.js'
+import { canAccessScholarFeatures } from '../../utils/roles.js'
 import Button from '../common/Button.jsx'
 import MobileMenu from '../layout/MobileMenu.jsx'
 
@@ -20,8 +21,10 @@ const memberItems = [
 ]
 
 export default function AppHeader() {
-  const { isAuthenticated, logout } = useAuth()
-  const navItems = isAuthenticated ? [...publicItems, ...memberItems] : publicItems
+  const { isAuthenticated, logout, user } = useAuth()
+  const location = useLocation()
+  const dashboardItem = { to: '/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard }
+  const navItems = isAuthenticated ? [...publicItems, ...memberItems, ...(canAccessScholarFeatures(user) ? [dashboardItem] : [])] : publicItems
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--color-primary-soft)] bg-[var(--color-header)]/95 shadow-sm backdrop-blur">
@@ -36,9 +39,10 @@ export default function AppHeader() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `rounded-full px-3 py-2 text-sm font-bold transition ${isActive ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-strong)]' : 'text-[var(--color-text-muted)] hover:bg-white hover:text-[var(--color-primary-strong)]'}`
+                `inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold transition ${isActive || (item.to === '/dashboard' && /^\/(admin|scholar)(\/|$)/.test(location.pathname)) ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-strong)]' : 'text-[var(--color-text-muted)] hover:bg-white hover:text-[var(--color-primary-strong)]'}`
               }
             >
+              {item.icon && <item.icon className="size-4" aria-hidden="true" />}
               {item.label}
             </NavLink>
           ))}
