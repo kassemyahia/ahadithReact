@@ -1,4 +1,15 @@
 const FALLBACK_MESSAGE = 'حدث خطأ غير متوقع. حاول مرة أخرى.'
+const STATUS_MESSAGES = {
+  400: 'تعذر تنفيذ الطلب. راجع البيانات وحاول مرة أخرى.',
+  401: 'يرجى تسجيل الدخول للمتابعة.',
+  403: 'لا تملك صلاحية تنفيذ هذا الإجراء.',
+  404: 'المورد المطلوب غير موجود.',
+  409: 'تعارض الطلب مع البيانات الحالية.',
+  413: 'حجم الملف أكبر من الحد المسموح.',
+  415: 'نوع الملف أو المحتوى غير مدعوم.',
+  429: 'تم إرسال طلبات كثيرة. حاول لاحقًا.',
+  500: 'حدث خطأ في الخادم. حاول لاحقًا.',
+}
 
 export function normalizeApiError(error) {
   const response = error?.response
@@ -7,8 +18,9 @@ export function normalizeApiError(error) {
   const requestId = data?.requestId || response?.headers?.['x-request-id'] || response?.headers?.['x-correlation-id'] || null
 
   if (response) {
+    const message = data?.message === 'Validation failed' ? STATUS_MESSAGES[400] : data?.message || data?.error || STATUS_MESSAGES[response.status] || FALLBACK_MESSAGE
     return {
-      message: safeMessage(data?.message || data?.error || FALLBACK_MESSAGE),
+      message: safeMessage(message),
       status: response.status ?? data?.status ?? null,
       fieldErrors,
       requestId,

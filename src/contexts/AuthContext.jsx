@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { login as loginRequest, logout as logoutRequest, register as registerRequest } from '../api/authApi.js'
+import { setAuthFailureHandler } from '../api/client.js'
 import { getCurrentUser } from '../api/profileApi.js'
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from '../services/tokenStorage.js'
 import { normalizeApiError } from '../utils/apiErrors.js'
@@ -38,6 +39,13 @@ export function AuthProvider({ children }) {
     void restoreSession()
   }, [restoreSession])
 
+  useEffect(() => {
+    setAuthFailureHandler(() => {
+      setUser(null)
+    })
+    return () => setAuthFailureHandler(null)
+  }, [])
+
   const login = useCallback(async (payload) => {
     try {
       const response = await loginRequest(payload)
@@ -70,6 +78,13 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    if (!getAccessToken()) return null
+    const currentUser = await getCurrentUser()
+    setUser(currentUser)
+    return currentUser
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -79,9 +94,9 @@ export function AuthProvider({ children }) {
       register,
       logout,
       restoreSession,
-      refreshUser: restoreSession,
+      refreshUser,
     }),
-    [isInitializing, login, logout, register, restoreSession, user],
+    [isInitializing, login, logout, refreshUser, register, restoreSession, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

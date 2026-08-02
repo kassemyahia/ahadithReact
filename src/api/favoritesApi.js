@@ -3,8 +3,8 @@ import { cleanParams } from '../utils/queryParams.js'
 
 // Inspected backend: MeFavoriteController and FavoriteResponseDto.
 /** @param {{ page?: number, size?: number }} params */
-export function getFavorites(params = {}) {
-  return apiClient.get('/me/favorites', { params: cleanParams(params) }).then((res) => res.data)
+export function getFavorites(params = {}, config = {}) {
+  return apiClient.get('/me/favorites', { ...config, params: cleanParams(params) }).then((res) => res.data)
 }
 
 /** @param {string} hadithId */

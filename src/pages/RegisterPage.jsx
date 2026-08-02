@@ -35,16 +35,16 @@ export default function RegisterPage() {
         <PasswordInput id="password" label="كلمة المرور" error={formState.errors.password?.message} {...register('password', { ...validators.required, ...validators.password })} />
         <Select id="gender" label="الجنس" {...register('gender')}>
           <option value="">غير محدد</option>
-          <option value="MALE">ذكر</option>
-          <option value="FEMALE">أنثى</option>
+          <option value="male">ذكر</option>
+          <option value="female">أنثى</option>
         </Select>
         <Input id="birthDate" label="تاريخ الميلاد" type="date" {...register('birthDate')} />
         <Button type="submit" disabled={formState.isSubmitting}>
           إنشاء الحساب
         </Button>
       </form>
-      <p className="mt-4 text-sm text-stone-600">
-        لديك حساب؟ <Link className="font-semibold text-emerald-800" to="/login">تسجيل الدخول</Link>
+      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
+        لديك حساب؟ <Link className="font-bold text-[var(--color-primary-strong)]" to="/login">تسجيل الدخول</Link>
       </p>
     </AuthFormContainer>
   )

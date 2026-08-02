@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
+import { Search } from 'lucide-react'
 import Button from '../common/Button.jsx'
-import Input from '../common/Input.jsx'
 import Select from '../common/Select.jsx'
 import { SEARCH_MODES, SEARCH_SORTS } from '../../utils/constants.js'
+import SearchInput from '../ui/SearchInput.jsx'
 
-export default function SearchForm({ defaultValues, onSubmit }) {
+export default function SearchForm({ defaultValues, onSubmit, loading = false }) {
   const { handleSubmit, register } = useForm({
     defaultValues: {
       query: '',
@@ -16,8 +17,9 @@ export default function SearchForm({ defaultValues, onSubmit }) {
   })
 
   return (
-    <form className="grid gap-4 rounded-md border border-stone-200 bg-white p-4 shadow-sm" onSubmit={handleSubmit(onSubmit)}>
-      <Input id="query" label="نص البحث" placeholder="اكتب كلمة أو عبارة" {...register('query')} />
+    <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <label className="sr-only" htmlFor="query">نص البحث</label>
+      <SearchInput id="query" {...register('query')} />
       <div className="grid gap-4 sm:grid-cols-3">
         <Select id="mode" label="طريقة البحث" {...register('mode')}>
           {SEARCH_MODES.map((mode) => (
@@ -33,13 +35,16 @@ export default function SearchForm({ defaultValues, onSubmit }) {
             </option>
           ))}
         </Select>
-        <label className="flex items-end gap-2 pb-3 text-sm text-stone-700">
-          <input className="h-4 w-4 accent-emerald-800" type="checkbox" {...register('includeExplanation')} />
+        <label className="flex min-h-12 items-center gap-3 rounded-[16px] border border-[var(--color-border-gold)] bg-white px-4 text-sm font-bold text-[var(--color-text)]">
+          <input className="size-5 accent-[var(--color-primary)]" type="checkbox" {...register('includeExplanation')} />
           تضمين الشرح
         </label>
       </div>
       <div>
-        <Button type="submit">بحث</Button>
+        <Button type="submit" loading={loading}>
+          <Search className="size-4" aria-hidden="true" />
+          بحث
+        </Button>
       </div>
     </form>
   )

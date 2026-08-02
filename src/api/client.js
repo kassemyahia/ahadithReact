@@ -1,69 +1,69 @@
-import axios from "axios";
-import {
-  clearTokens,
-  getAccessToken,
-  getRefreshToken,
-  setTokens,
-} from "../services/tokenStorage.js";
+import axios from 'axios'
+import { clearTokens, getAccessToken, getRefreshToken, setTokens } from '../services/tokenStorage.js'
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/v1";
-// const API_BASE_URL =
-// import.meta.env.VITE_API_BASE_URL || "https://api.jamilhelal.me/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8080/api/v1' : '/api/v1')
+
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    Accept: "application/json",
+    Accept: 'application/json',
   },
-});
+})
 
 apiClient.interceptors.request.use((config) => {
-  const token = getAccessToken();
+  const token = getAccessToken()
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`
   }
 
-  return config;
-});
+  return config
+})
 
-let refreshRequest = null;
+let refreshRequest = null
+let authFailureHandler = null
+
+export function setAuthFailureHandler(handler) {
+  authFailureHandler = handler
+}
 
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-    const refreshToken = getRefreshToken();
+    const originalRequest = error.config
+    const refreshToken = getRefreshToken()
 
     if (
       error.response?.status !== 401 ||
       originalRequest?._retry ||
-      originalRequest?.url === "/auth/refresh" ||
+      originalRequest?._skipAuthRefresh ||
+      originalRequest?.url === '/auth/refresh' ||
       !refreshToken
     ) {
-      return Promise.reject(error);
+      return Promise.reject(error)
     }
 
-    originalRequest._retry = true;
+    originalRequest._retry = true
 
     try {
-      // TODO: Replace this minimal shared request with a tested refresh queue if concurrent 401 behavior becomes user-visible.
       refreshRequest ||= apiClient
-        .post("/auth/refresh", { refreshToken })
+        .post('/auth/refresh', { refreshToken }, { _skipAuthRefresh: true })
         .then((response) => response.data)
         .finally(() => {
-          refreshRequest = null;
-        });
+          refreshRequest = null
+        })
 
-      const tokens = await refreshRequest;
-      setTokens(tokens);
-      originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
-      return apiClient(originalRequest);
+      const tokens = await refreshRequest
+      setTokens(tokens)
+      originalRequest.headers ||= {}
+      originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`
+      return apiClient(originalRequest)
     } catch (refreshError) {
-      clearTokens();
-      return Promise.reject(refreshError);
+      clearTokens()
+      authFailureHandler?.()
+      return Promise.reject(refreshError)
     }
   },
-);
+)
 
-export default apiClient;
+export default apiClient

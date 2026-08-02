@@ -1,11 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
   color-scheme: light;
   font-family:
-    "Noto Naskh Arabic", "Amiri", "Segoe UI", Tahoma, Arial, sans-serif;
-  background: #f7f3ea;
-  color: #1f2933;
+    Almarai, Tajawal, Cairo, "Noto Kufi Arabic", "Noto Sans Arabic", Arial, sans-serif;
+  --color-page: #fbf3e8;
+  --color-header: #fff9f3;
+  --color-surface: #ffffff;
+  --color-primary: #d09a43;
+  --color-primary-strong: #b67b24;
+  --color-primary-amber: #f9b84e;
+  --color-primary-soft: #f7e5c7;
+  --color-border: #d6d6d6;
+  --color-border-gold: #d7a754;
+  --color-text: #292929;
+  --color-text-muted: #696969;
+  --color-muted: #9a8a73;
+  --color-danger: #b94036;
+  --shadow-card: 0 10px 28px rgb(95 67 26 / 0.08);
+  --shadow-nav: 0 14px 40px rgb(74 47 13 / 0.18);
+  background: var(--color-page);
+  color: var(--color-text);
   direction: rtl;
   line-height: 1.6;
 }
@@ -19,6 +35,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   line-height: 1.6;
+  background: var(--color-page);
 }
 
 a {
@@ -39,7 +56,7 @@ textarea {
 }
 
 :focus-visible {
-  outline: 3px solid #047857;
+  outline: 3px solid var(--color-primary);
   outline-offset: 3px;
 }
 
@@ -50,4 +67,24 @@ textarea {
 
 .hadith-text {
   line-height: 2.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-soft);
+  border-radius: 9999px;
 }

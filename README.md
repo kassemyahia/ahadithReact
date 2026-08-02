@@ -1,133 +1,79 @@
 # Ahadith React Frontend
 
-Arabic-first Vite React scaffold for the Ahadith web application.
+Arabic RTL React frontend for the Ahadith application. The app connects to the Spring Boot API under `/api/v1` and supports public Hadith search/catalog browsing plus authenticated member flows.
 
-## Purpose
+Backend reference: https://github.com/jamilhelal37/Ahadith-spring
 
-This project provides the initial frontend architecture for public Hadith browsing, search, authentication, user profiles, profile images, and favorites. It intentionally avoids fake Hadith data and does not include admin, scholar, comments, questions, notifications, or search-history screens yet.
+## Stack
 
-Backend repository: https://github.com/jamilhelal37/Ahadith-spring
-
-## Technology Stack
-
-- React JavaScript
-- Vite
+- React JavaScript with Vite
 - React Router
-- Axios
 - TanStack Query
+- Axios
 - React Hook Form
-- Tailwind CSS with `@tailwindcss/vite`
-- Vitest
-- React Testing Library
-- ESLint
+- Tailwind CSS v4
+- Vitest and React Testing Library
 
-## Prerequisites
+## Requirements
 
-- Node.js compatible with the installed Vite version
-- npm
-- The backend API running separately when testing real API calls
+- Node.js and npm
+- Ahadith Spring backend running separately for real API calls
 
-Expected local backend API base URL:
+## Environment
 
-```text
-http://localhost:8080/api/v1
-```
-
-## Installation
-
-```bash
-npm install
-```
-
-## Environment Configuration
-
-Create a local `.env` only when overriding defaults. Do not commit `.env`.
+Create `.env` from `.env.example` when you need a custom API URL:
 
 ```text
 VITE_API_BASE_URL=http://localhost:8080/api/v1
 ```
 
-`.env.example` is provided with the expected local value.
+In production, set `VITE_API_BASE_URL` to the deployed canonical `/api/v1` backend URL or serve the frontend behind the same origin with `/api/v1` proxied to the backend.
 
 ## Commands
 
 ```bash
+npm install
 npm run dev
 npm run lint
 npm run test
 npm run build
 ```
 
-## Folder Structure
+## Current Features
 
-- `src/api`: Shared Axios client and API modules.
-- `src/components`: Common UI, layout, Hadith, books, search, and auth components.
-- `src/contexts`: Authentication provider.
-- `src/hooks`: `useAuth`, `useDebounce`, and `usePagination`.
-- `src/pages`: Route-level placeholder pages.
-- `src/routes`: React Router route tree.
-- `src/services`: Local token storage.
-- `src/utils`: API error normalization, query params, constants, and validators.
-- `src/styles`: Tailwind entry stylesheet and minimal global CSS.
-- `src/test`: Vitest/RTL setup.
+- Public home, Hadith search, Hadith details, books, book Hadith list, narrators, muhaddiths, and invalid Hadith pages.
+- Authentication: registration, login, logout, email verification, forgot password, reset password, session restoration, and refresh-token retry.
+- Member profile display, profile image upload/removal, logout current session, and logout all sessions.
+- Member favorites list, favorite add/remove, and favorite state on Hadith details.
+- Member questions: ask, list, answer display, and delete.
+- Member search history: list, search again, delete one item, and clear all.
+- Member upgrade requests: PDF upload, request history, status display, and signed document download.
+- Arabic loading, empty, error, and pending states.
 
 ## Routes
 
-- `/`
-- `/search`
-- `/hadith/:hadithId`
-- `/books`
-- `/books/:bookId`
-- `/login`
-- `/register`
-- `/verify-email`
-- `/forgot-password`
-- `/reset-password`
-- `/profile`
-- `/favorites`
-- `*`
+- Public: `/`, `/search`, `/hadith/:hadithId`, `/books`, `/books/:bookId`, `/invalid-hadiths`, `/narrators`, `/muhaddiths`, `/verify-email`, `/unauthorized`
+- Guest only: `/login`, `/register`, `/forgot-password`, `/reset-password`
+- Authenticated member: `/profile`, `/favorites`, `/questions`, `/settings`, `/search-history`, `/upgrade-request`
 
-`/profile` and `/favorites` are protected by `ProtectedRoute`.
+## Authentication
 
-## Authentication Architecture
+`AuthProvider` owns the current user and session actions. Access and refresh tokens are isolated in `src/services/tokenStorage.js`. The Axios client attaches access tokens, queues concurrent refresh attempts through one shared refresh request, retries failed 401 requests once, and clears local auth state if refresh fails.
 
-`AuthProvider` centralizes login, logout, and session restoration. It keeps the user object in memory and stores only access and refresh tokens in localStorage for this scaffold. Before production, refresh-token storage should be revisited with the backend, preferably using Secure HttpOnly cookies.
+Moving refresh tokens to Secure, HttpOnly cookies requires coordinated backend changes.
 
-The Axios client attaches the access token, includes a minimal 401 refresh foundation, avoids redirecting from the API layer, and clears tokens when refresh fails.
+## File Uploads
 
-## API Modules
+- Profile images: JPEG, PNG, or WebP, maximum 2 MB.
+- Upgrade documents: PDF only. The backend validates MIME type, extension, PDF content, page count, and size.
 
-- `authApi.js`: login, register, refresh, logout, email verification, password reset flows.
-- `hadithApi.js`: Hadith search, search filters, Hadith details.
-- `catalogApi.js`: books, book Hadiths, narrators, scholars, topics, rulings, explanations.
-- `profileApi.js`: current user, profile image upload/removal, logout all sessions.
-- `favoritesApi.js`: list, add, and remove favorites.
+## Backend Coverage
 
-Endpoint paths were based on inspected backend Spring controllers and DTOs under `/api/v1`.
+See `docs/backend-api-coverage.md` for the endpoint inventory, frontend mapping, and remaining UI limitations.
 
-## Current Status
+## Deployment Notes
 
-- Project scaffold and routing are in place.
-- Public pages are semantic Arabic placeholders and do not fetch live data yet.
-- API functions are ready for future feature wiring.
-- Auth forms use confirmed backend payload shapes.
-- Tailwind v4 Vite integration is configured.
-- Basic tests cover protected routing, route rendering, token storage, query-page conversion, API error normalization, button behavior, and `useAuth` misuse.
-
-## Known Limitations
-
-- No production visual design yet.
-- No full refresh-token concurrency queue.
-- No focus trap in `Modal` yet.
-- No profile image UI flow yet.
-- No real search-results page wiring yet.
-- No admin, scholar, comments, questions, notifications, or search-history screens.
-
-## Next Steps
-
-- Wire search pages to `searchHadiths` and `getSearchFilters`.
-- Wire books pages to `getBooks`, `getBook`, and `getBookHadiths`.
-- Add Hadith details loading with favorite state.
-- Build profile image upload and removal UI.
-- Add mutation handling for favorites.
-- Add broader component tests as page behavior becomes real.
+- Configure `VITE_API_BASE_URL`.
+- Ensure SPA fallback routes serve `index.html`.
+- Configure backend CORS for the deployed frontend origin.
+- Configure backend email verification and password-reset frontend URLs.

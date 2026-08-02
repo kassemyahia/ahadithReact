@@ -35,7 +35,7 @@ describe('AppRoutes', () => {
   it('renders the Arabic home page', () => {
     renderRoutes('/')
 
-    expect(screen.getByRole('heading', { name: /ابحث في الأحاديث/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'الرئيسية' })).toBeInTheDocument()
   })
 
   it('redirects protected routes to login when unauthenticated', () => {
